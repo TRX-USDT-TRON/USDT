@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, redirect, url_for
 import datetime
 
 app = Flask(__name__)
@@ -11,22 +11,21 @@ TOKEN_INFO = {
     "supply": 1000000000,  # 1 bilhão
     "network": "Tron",
     "standard": "TRC20",
-    "contract_address": "TKKt9vhwV961ZR92FPF3MJ3xzWeBmt9qUX"  # cole o contrato real aqui
+    "contract_address": "TKKt9vhwV961ZR92FPF3MJ3xzWeBmt9qUX"
 }
 
-# 🔹 Preço fixo inicial (você pode ajustar quando quiser)
+# 🔹 Preço baseado na sua regra:
+# 10 TRX = 1000 tokens  ->  1 token = 0.01 TRX
+# Assumindo 1 TRX = 0.12 USDT (ajuste se quiser)
 PRICE_DATA = {
-    "TRX": 0.05,     # 1 USDT = 0.01 TRX
-    "USDT": 0.006    # 1 USDT = 0.0012 USDT (exemplo simbólico)
+    "TRX": 0.01,       # 1 token = 0.01 TRX
+    "USDT": 0.0012     # 1 token ≈ 0.0012 USDT
 }
 
+# 🔹 Rota raiz já redireciona para /price
 @app.route("/", methods=["GET"])
-def home():
-    return jsonify({
-        "status": "online",
-        "token": TOKEN_INFO,
-        "message": "USDT/TRX Price API is running!"
-    })
+def root_redirect():
+    return redirect(url_for("get_price"))
 
 @app.route("/info", methods=["GET"])
 def get_info():
